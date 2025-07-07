@@ -10,7 +10,7 @@ plugins {
 //    alias(libs.plugins.versions)
 }
 
-group = "com.mattbobambrose.mcp_utils"
+group = "com.github.mattbobambrose.mcp_utils"
 version = "0.1.1-SNAPSHOT"
 
 kotlin {

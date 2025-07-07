@@ -10,6 +10,11 @@ plugins {
   alias(libs.plugins.versions)
 }
 
+val versionStr = "0.1.1-SNAPSHOT"
+
+group = "com.github.mattbobambrose.mcp_utils"
+version = versionStr
+
 repositories {
   mavenCentral()
   maven { url = uri("https://jitpack.io") }
@@ -25,8 +30,23 @@ dependencies {
   implementation(libs.openai.java)
   implementation(libs.utils.json)
   testImplementation(libs.kotlin.test)
-
 }
+
+publishing {
+  publications {
+    create<MavenPublication>("maven") {
+      groupId = group.toString()
+      artifactId = project.name
+      version = versionStr
+      from(components["java"])
+    }
+  }
+}
+
+java {
+  withSourcesJar()
+}
+
 
 //application {
 //    // Define the Fully Qualified Name for the application main class
