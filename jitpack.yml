@@ -3,4 +3,5 @@ jdk:
 install:
   - ./gradlew clean build -xtest
   - ./gradlew publishToMavenLocal
-  - ./gradlew :buildSrc:publish
+  - ./gradlew :shell:publish
+  - ./gradlew :tools:publish
