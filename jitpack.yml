@@ -5,3 +5,5 @@ install:
   - ./gradlew publishToMavenLocal
   - ./gradlew :shell:publish
   - ./gradlew :tools:publish
+  - ls tools/build/libs
+  - ls shell/build/libs
