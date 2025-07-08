@@ -11,14 +11,21 @@ import org.gradle.kotlin.dsl.get
 fun Project.configurePublishing(versionStr: String) = {
   configure<PublishingExtension> {
     publications {
-      create<MavenPublication>("maven") {
+      create<MavenPublication>("release") {
         groupId = group.toString()
         artifactId = project.name
         version = versionStr
-        afterEvaluate {
-          from(components["java"])
-        }
+//        afterEvaluate {
+        from(components["release"])
+//        }
       }
+//      create<MavenPublication>("release") {
+//        groupId = "com.example"
+//        artifactId = "mylibrary"
+//        version = "1.0.0"
+//        // 'afterEvaluate' is not needed in Kotlin DSL for most cases
+//        from(components["release"])
+//      }
     }
   }
   java {
