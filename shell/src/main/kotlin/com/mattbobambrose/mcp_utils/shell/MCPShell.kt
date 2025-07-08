@@ -1,4 +1,4 @@
-package com.mattbobambrose.mcp_utils
+package com.mattbobambrose.mcp_utils.shell
 
 import com.openai.client.OpenAIClient
 import com.openai.client.okhttp.OpenAIOkHttpClient

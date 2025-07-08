@@ -1,4 +1,4 @@
-import com.mattbobambrose.mcp_utils.LLMTool
+import com.mattbobambrose.mcp_utils.tools.LLMTool
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.valueParameters
@@ -9,7 +9,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-class AddToolsTest {
+class MCPToolsTest {
 
   // Test classes with various tool methods
   class TestTools {

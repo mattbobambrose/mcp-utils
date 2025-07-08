@@ -1,19 +1,19 @@
-package com.mattbobambrose.mcp_utils// Static imports for TypeNames constants
-import com.mattbobambrose.mcp_utils.TypeNames.JAVA_BOOLEAN
-import com.mattbobambrose.mcp_utils.TypeNames.JAVA_DOUBLE
-import com.mattbobambrose.mcp_utils.TypeNames.JAVA_FLOAT
-import com.mattbobambrose.mcp_utils.TypeNames.JAVA_INTEGER
-import com.mattbobambrose.mcp_utils.TypeNames.JAVA_LIST
-import com.mattbobambrose.mcp_utils.TypeNames.JAVA_MAP
-import com.mattbobambrose.mcp_utils.TypeNames.JAVA_SET
-import com.mattbobambrose.mcp_utils.TypeNames.JAVA_STRING
-import com.mattbobambrose.mcp_utils.TypeNames.KOTLIN_LIST
-import com.mattbobambrose.mcp_utils.TypeNames.KOTLIN_MAP
-import com.mattbobambrose.mcp_utils.TypeNames.KOTLIN_SET
-import com.mattbobambrose.mcp_utils.TypeNames.PRIMITIVE_BOOLEAN
-import com.mattbobambrose.mcp_utils.TypeNames.PRIMITIVE_DOUBLE
-import com.mattbobambrose.mcp_utils.TypeNames.PRIMITIVE_FLOAT
-import com.mattbobambrose.mcp_utils.TypeNames.PRIMITIVE_INT
+package com.mattbobambrose.mcp_utils.tools// Static imports for TypeNames constants
+import com.mattbobambrose.mcp_utils.tools.TypeNames.JAVA_BOOLEAN
+import com.mattbobambrose.mcp_utils.tools.TypeNames.JAVA_DOUBLE
+import com.mattbobambrose.mcp_utils.tools.TypeNames.JAVA_FLOAT
+import com.mattbobambrose.mcp_utils.tools.TypeNames.JAVA_INTEGER
+import com.mattbobambrose.mcp_utils.tools.TypeNames.JAVA_LIST
+import com.mattbobambrose.mcp_utils.tools.TypeNames.JAVA_MAP
+import com.mattbobambrose.mcp_utils.tools.TypeNames.JAVA_SET
+import com.mattbobambrose.mcp_utils.tools.TypeNames.JAVA_STRING
+import com.mattbobambrose.mcp_utils.tools.TypeNames.KOTLIN_LIST
+import com.mattbobambrose.mcp_utils.tools.TypeNames.KOTLIN_MAP
+import com.mattbobambrose.mcp_utils.tools.TypeNames.KOTLIN_SET
+import com.mattbobambrose.mcp_utils.tools.TypeNames.PRIMITIVE_BOOLEAN
+import com.mattbobambrose.mcp_utils.tools.TypeNames.PRIMITIVE_DOUBLE
+import com.mattbobambrose.mcp_utils.tools.TypeNames.PRIMITIVE_FLOAT
+import com.mattbobambrose.mcp_utils.tools.TypeNames.PRIMITIVE_INT
 import io.modelcontextprotocol.kotlin.sdk.CallToolResult
 import io.modelcontextprotocol.kotlin.sdk.TextContent
 import io.modelcontextprotocol.kotlin.sdk.Tool
@@ -51,7 +51,7 @@ private object TypeNames {
   const val KOTLIN_MAP = "kotlin.collections.Map"
 }
 
-fun Server.addTools(toolsObject: Any) {
+fun Server.integrateTools(toolsObject: Any) {
   val objectClass = toolsObject::class
 
   objectClass.functions.forEach { function ->
