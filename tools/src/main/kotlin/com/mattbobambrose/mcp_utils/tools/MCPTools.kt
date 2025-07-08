@@ -52,6 +52,7 @@ private object TypeNames {
 }
 
 fun Server.integrateTools(toolsObject: Any) {
+  // I am here
   val objectClass = toolsObject::class
 
   objectClass.functions.forEach { function ->

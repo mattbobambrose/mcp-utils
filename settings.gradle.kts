@@ -23,3 +23,4 @@ include(":tools")
 include(":shell")
 
 rootProject.name = "mcp-utils"
+include("examples")
