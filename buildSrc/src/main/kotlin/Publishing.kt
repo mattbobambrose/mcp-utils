@@ -11,12 +11,12 @@ import org.gradle.kotlin.dsl.get
 fun Project.configurePublishing(versionStr: String) = {
   configure<PublishingExtension> {
     publications {
-      create<MavenPublication>("release") {
+      create<MavenPublication>("mavenJava") {
         groupId = group.toString()
         artifactId = project.name
         version = versionStr
 //        afterEvaluate {
-        from(components["release"])
+        from(components["java"])
 //        }
       }
 //      create<MavenPublication>("release") {
