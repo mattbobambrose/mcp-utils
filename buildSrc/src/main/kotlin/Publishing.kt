@@ -15,7 +15,9 @@ fun Project.configurePublishing(versionStr: String) = {
         groupId = group.toString()
         artifactId = project.name
         version = versionStr
-        from(components["java"])
+        afterEvaluate {
+          from(components["java"])
+        }
       }
     }
   }
