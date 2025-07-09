@@ -20,13 +20,6 @@ fun Project.configurePublishing(versionStr: String) = {
           from(components["java"] as SoftwareComponent)
 //        }
       }
-//      create<MavenPublication>("release") {
-//        groupId = "com.example"
-//        artifactId = "mylibrary"
-//        version = "1.0.0"
-//        // 'afterEvaluate' is not needed in Kotlin DSL for most cases
-//        from(components["release"])
-//      }
     }
   }
   java {
