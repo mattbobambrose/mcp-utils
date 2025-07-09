@@ -2,9 +2,8 @@ jdk:
   - openjdk17
 install:
   - ./gradlew clean build -xtest
-  - ./gradlew :shell:publishToMavenLocal
-  - ./gradlew :tools:publishToMavenLocal
-  #  - ./gradlew :shell:publish
-  #  - ./gradlew :tools:publish
+  #  - ./gradlew :shell:publishToMavenLocal
+  #  - ./gradlew :tools:publishToMavenLocal
+  - ./gradlew :publishToMavenLocal
   - ls tools/build/libs
   - ls shell/build/libs
