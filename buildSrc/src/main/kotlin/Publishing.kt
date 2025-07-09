@@ -16,9 +16,9 @@ fun Project.configurePublishing(versionStr: String) = {
         groupId = group.toString()
         artifactId = project.name
         version = versionStr
-        afterEvaluate {
+//        afterEvaluate {
           from(components["java"] as SoftwareComponent)
-        }
+//        }
       }
 //      create<MavenPublication>("release") {
 //        groupId = "com.example"
