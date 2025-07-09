@@ -24,19 +24,17 @@ dependencies {
   testImplementation(kotlin("test"))
 }
 
-//configurePublishing(versionStr)
+java {
+  withSourcesJar()
+}
+
 publishing {
   publications {
     create<MavenPublication>("maven") {
       groupId = group.toString()
       artifactId = project.name
       version = versionStr
-//        afterEvaluate {
       from(components["java"] as SoftwareComponent)
-//        }
     }
   }
-}
-java {
-  withSourcesJar()
 }

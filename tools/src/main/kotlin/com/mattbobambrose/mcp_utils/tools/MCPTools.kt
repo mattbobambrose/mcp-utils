@@ -51,7 +51,7 @@ private object TypeNames {
   const val KOTLIN_MAP = "kotlin.collections.Map"
 }
 
-fun Server.integrateTools2(toolsObject: Any) {
+fun Server.integrateTools3(toolsObject: Any) {
   // I am here
   val objectClass = toolsObject::class
 
