@@ -1,3 +1,5 @@
+import buildsrc.convention.versionStr
+
 plugins {
   // Apply the shared build logic from a convention plugin.
   // The shared code is located in `buildSrc/src/main/kotlin/kotlin-jvm.gradle.kts`.
@@ -8,11 +10,6 @@ plugins {
   `maven-publish`
   alias(libs.plugins.shadow)
   alias(libs.plugins.versions)
-}
-
-repositories {
-  mavenCentral()
-  maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {
@@ -27,7 +24,17 @@ dependencies {
   testImplementation(kotlin("test"))
 }
 
-repositories {
-  mavenCentral()
-  maven { url = uri("https://jitpack.io") }
+java {
+  withSourcesJar()
+}
+
+publishing {
+  publications {
+    create<MavenPublication>("maven") {
+      groupId = group.toString()
+      artifactId = project.name
+      version = versionStr
+      from(components["java"] as SoftwareComponent)
+    }
+  }
 }

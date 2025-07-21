@@ -14,6 +14,16 @@ kotlin {
   jvmToolchain(17)
 }
 
+//val versionStr = "0.1.1-SNAPSHOT"
+
+group = "com.github.mattbobambrose.mcp_utils"
+version = versionStr
+
+repositories {
+  mavenCentral()
+  maven { url = uri("https://jitpack.io") }
+}
+
 tasks.withType<Test>().configureEach {
   // Configure all test Gradle tasks to use JUnitPlatform.
   useJUnitPlatform()

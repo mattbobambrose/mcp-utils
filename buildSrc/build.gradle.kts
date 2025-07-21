@@ -10,8 +10,8 @@ plugins {
 //    alias(libs.plugins.versions)
 }
 
-group = "com.github.vapi4k"
-version = "0.1.0"
+group = "com.github.mattbobambrose.mcp_utils"
+version = "0.1.1"
 
 kotlin {
   jvmToolchain(17)
