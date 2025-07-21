@@ -23,6 +23,7 @@ import io.modelcontextprotocol.kotlin.sdk.client.Client
 import io.modelcontextprotocol.kotlin.sdk.client.mcpSse
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
+import java.util.Collections.emptyList
 import kotlin.jvm.optionals.getOrNull
 
 /**
