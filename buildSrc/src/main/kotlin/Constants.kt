@@ -1,3 +1,3 @@
 package buildsrc.convention
 
-const val versionStr = "0.1.1-SNAPSHOT"
+const val versionStr = "1.0.0"
