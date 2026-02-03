@@ -16,8 +16,8 @@ import com.mattbobambrose.mcp_utils.tools.TypeNames.PRIMITIVE_FLOAT
 import com.mattbobambrose.mcp_utils.tools.TypeNames.PRIMITIVE_INT
 import io.modelcontextprotocol.kotlin.sdk.CallToolResult
 import io.modelcontextprotocol.kotlin.sdk.TextContent
-import io.modelcontextprotocol.kotlin.sdk.Tool
 import io.modelcontextprotocol.kotlin.sdk.server.Server
+import io.modelcontextprotocol.kotlin.sdk.types.ToolSchema
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -88,7 +88,7 @@ fun Server.integrateTools(toolsObject: Any) {
         }
       }
 
-      val inputSchema = Tool.Input(
+      val inputSchema = ToolSchema(
         properties = JsonObject(properties),
         required = required
       )
