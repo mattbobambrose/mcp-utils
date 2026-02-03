@@ -11,7 +11,7 @@ junit = "4.13.2"
 mcp = "0.8.3"
 slf4j = "2.0.17"
 ktor = "3.4.0"
-shadow = "8.1.1"
+shadow = "8.3.6"
 openai = "4.17.0"
 utils = "2.4.10"
 versions = "0.53.0"
@@ -41,5 +41,5 @@ kotlinxEcosystem = ["kotlinxDatetime", "kotlinxSerialization", "kotlinxCoroutine
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 versions = { id = "com.github.ben-manes.versions", version.ref = "versions" }
