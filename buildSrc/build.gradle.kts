@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "com.github.mattbobambrose.mcp_utils"
-version = "1.0.0"
+version = "0.1.1"
 
 kotlin {
   jvmToolchain(17)

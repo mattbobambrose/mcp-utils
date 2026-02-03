@@ -14,6 +14,8 @@ kotlin {
   jvmToolchain(17)
 }
 
+//val versionStr = "0.1.1-SNAPSHOT"
+
 group = "com.github.mattbobambrose.mcp_utils"
 version = versionStr
 
