@@ -14,9 +14,9 @@ import com.mattbobambrose.mcp_utils.tools.TypeNames.PRIMITIVE_BOOLEAN
 import com.mattbobambrose.mcp_utils.tools.TypeNames.PRIMITIVE_DOUBLE
 import com.mattbobambrose.mcp_utils.tools.TypeNames.PRIMITIVE_FLOAT
 import com.mattbobambrose.mcp_utils.tools.TypeNames.PRIMITIVE_INT
-import io.modelcontextprotocol.kotlin.sdk.CallToolResult
-import io.modelcontextprotocol.kotlin.sdk.TextContent
 import io.modelcontextprotocol.kotlin.sdk.server.Server
+import io.modelcontextprotocol.kotlin.sdk.types.CallToolResult
+import io.modelcontextprotocol.kotlin.sdk.types.TextContent
 import io.modelcontextprotocol.kotlin.sdk.types.ToolSchema
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
@@ -102,7 +102,7 @@ fun Server.integrateTools(toolsObject: Any) {
         // Prepare arguments for method invocation
         val args = function.valueParameters.map { param ->
           val paramName = param.name ?: "unknown"
-          val argValue = request.arguments[paramName]
+          val argValue = request.arguments?.get(paramName)
           val javaTypeName = param.type.javaType.typeName
 
           when {
@@ -140,15 +140,14 @@ fun Server.integrateTools(toolsObject: Any) {
 
         try {
           // Invoke the method on the tools object
-          val result = function.call(toolsObject, *args)
-
           // Convert result to CallToolResult
-          val content = when (result) {
-            is List<*> -> result.map { TextContent(it.toString()) }
-            is Set<*> -> result.map { TextContent(it.toString()) }
-            is String -> listOf(TextContent(result))
-            else -> listOf(TextContent(result.toString()))
-          }
+          val content =
+            when (val result = function.call(toolsObject, *args)) {
+              is List<*> -> result.map { TextContent(it.toString()) }
+              is Set<*> -> result.map { TextContent(it.toString()) }
+              is String -> listOf(TextContent(result))
+              else -> listOf(TextContent(result.toString()))
+            }
 
           CallToolResult(content = content)
         } catch (e: Exception) {
