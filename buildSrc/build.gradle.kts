@@ -12,7 +12,7 @@ plugins {
 
 group = "com.github.mattbobambrose.mcp_utils"
 // Change globally in Constants.kt
-version = "0.1.1"
+version = "1.1.2"
 
 kotlin {
   jvmToolchain(17)
