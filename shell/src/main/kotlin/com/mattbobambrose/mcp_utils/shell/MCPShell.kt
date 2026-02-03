@@ -8,11 +8,9 @@ import com.openai.models.FunctionDefinition
 import com.openai.models.FunctionParameters
 import com.openai.models.chat.completions.ChatCompletionAssistantMessageParam
 import com.openai.models.chat.completions.ChatCompletionCreateParams
-import com.openai.models.chat.completions.ChatCompletionMessageParam
-import com.openai.models.chat.completions.ChatCompletionMessageToolCall
-import com.openai.models.chat.completions.ChatCompletionSystemMessageParam
+import com.openai.models.chat.completions.ChatCompletionFunctionTool
 import com.openai.models.chat.completions.ChatCompletionTool
-import com.openai.models.chat.completions.ChatCompletionUserMessageParam
+import com.openai.models.chat.completions.ChatCompletionToolMessageParam
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.sse.SSE
@@ -35,21 +33,23 @@ import kotlin.jvm.optionals.getOrNull
  */
 private fun List<Tool>.toListChatCompletionTools(): List<ChatCompletionTool> {
   return this.map { tool ->
-    ChatCompletionTool.builder()
-      .function(
-        FunctionDefinition.builder()
-          .name(tool.name)
-          .description(tool.description ?: "")
-          .parameters(
-            FunctionParameters.builder()
-              .putAdditionalProperty("type", JsonValue.from(tool.inputSchema.type))
-              .putAdditionalProperty("properties", JsonValue.from(tool.inputSchema.properties))
-              .putAdditionalProperty("required", JsonValue.from(tool.inputSchema.required))
-              .build()
-          )
-          .build()
-      )
-      .build()
+    ChatCompletionTool.ofFunction(
+      ChatCompletionFunctionTool.builder()
+        .function(
+          FunctionDefinition.builder()
+            .name(tool.name)
+            .description(tool.description ?: "")
+            .parameters(
+              FunctionParameters.builder()
+                .putAdditionalProperty("type", JsonValue.from(tool.inputSchema.type))
+                .putAdditionalProperty("properties", JsonValue.from(tool.inputSchema.properties))
+                .putAdditionalProperty("required", JsonValue.from(tool.inputSchema.required))
+                .build()
+            )
+            .build()
+        )
+        .build()
+    )
   }
 }
 
@@ -106,129 +106,75 @@ class MCPShell : AutoCloseable {
     query: String,
     systemPrompt: String = "You are a helpful assistant that answers questions."
   ): String {
-    // Create the base conversation message
-    val messages = mutableListOf(
-      // System message
-      ChatCompletionMessageParam.ofSystem(
-        ChatCompletionSystemMessageParam.builder()
-          .content(systemPrompt)
-          .build(),
-      ),
-      // User message
-      ChatCompletionMessageParam.ofUser(
-        ChatCompletionUserMessageParam.builder().content(query).build()
-      )
-    )
-
-    // Set up parameters for the OpenAI chat completion
-    val params = ChatCompletionCreateParams.builder()
-      .messages(messages)
+    // Set up parameters builder for the OpenAI chat completion
+    val paramsBuilder = ChatCompletionCreateParams.builder()
+      .addSystemMessage(systemPrompt)
+      .addUserMessage(query)
       .model(ChatModel.GPT_4O)
       .maxCompletionTokens(1000)
       .tools(availableTools)
-      .build()
-
-    // Get the initial completion response
-    val completion = openAiClient.chat().completions().create(params)
 
     val answer = StringBuilder()
-    val assistantMessage = StringBuilder()
 
-    // Handle all choices from the assistant
-//    while (true) {
-    for (choice in completion.choices()) {
+    // Get the initial completion response
+    var completion = openAiClient.chat().completions().create(paramsBuilder.build())
+
+    // Handle tool calls in a loop until no more tool calls are returned
+    while (true) {
+      val choice = completion.choices().firstOrNull() ?: break
       println("Choice: $choice")
+
       // Append direct content from the assistant
       choice.message().content().ifPresent {
         println("Content: $it")
         answer.appendLine(it)
-        assistantMessage.appendLine(it)
       }
 
-      println("Tool calls size: ${choice.message().toolCalls().getOrNull()?.size}")
-      println("Tool calls: ${choice.message().toolCalls()}")
+      val toolCalls = choice.message().toolCalls().getOrNull()
+      println("Tool calls size: ${toolCalls?.size}")
+      println("Tool calls: $toolCalls")
 
-      var toolsList = (choice.message().toolCalls().getOrNull() ?: emptyList()).toMutableList()
-      var currentToolsList = toolsList.toList()
-      // Process any tool calls returned by the assistant
-      while (toolsList.isNotEmpty()) {
-        toolsList = mutableListOf()
-        for (toolCall in currentToolsList) {
-          callTool(toolCall, answer, assistantMessage, messages, toolsList)
-        }
-        currentToolsList = toolsList.toList()
+      if (toolCalls.isNullOrEmpty()) {
+        break
       }
+
+      // Add the assistant message with tool calls to the conversation
+      paramsBuilder.addMessage(
+        ChatCompletionAssistantMessageParam.builder()
+          .toolCalls(toolCalls)
+          .build()
+      )
+
+      // Process each tool call and add the results
+      for (toolCall in toolCalls) {
+        val functionToolCall = toolCall.asFunction()
+        val toolName = functionToolCall.function().name()
+        val args = Json {}.decodeFromString<Map<String, String>>(functionToolCall.function().arguments())
+
+        val aiMessage = "Calling tool $toolName with arguments $args"
+        answer.appendLine("[$aiMessage]")
+
+        // Call the MCP tool with parsed arguments
+        val result = mcpClient.callTool(toolName, args)
+        val resultContent = result.content.joinToString()
+        println("Function result = $resultContent")
+
+        // Add the tool result message
+        paramsBuilder.addMessage(
+          ChatCompletionToolMessageParam.builder()
+            .toolCallId(functionToolCall.id())
+            .content(resultContent)
+            .build()
+        )
+      }
+
+      // Request a new response after tool usage
+      completion = openAiClient.chat().completions().create(paramsBuilder.build())
     }
+
     val finalAnswer = answer.toString()
     println("Final answer: $finalAnswer")
     return finalAnswer
-//    }
-  }
-
-  suspend fun callTool(
-    toolCall: ChatCompletionMessageToolCall,
-    answer: StringBuilder,
-    assistantMessage: StringBuilder,
-    messages: MutableList<ChatCompletionMessageParam>,
-    toolsList: MutableList<ChatCompletionMessageToolCall>
-  ) {
-    val toolName = toolCall.function().name()
-    val args = Json {}.decodeFromString<Map<String, String>>(toolCall.function().arguments())
-
-    // Call the MCP tool with parsed arguments
-    val result = mcpClient.callTool(toolName, args)
-
-    val aiMessage = "Calling tool $toolName with arguments $args"
-    answer.appendLine("[$aiMessage]")
-    assistantMessage.appendLine(aiMessage)
-
-    // Add the assistant message to reflect the tool call
-    messages.add(
-      ChatCompletionMessageParam.ofAssistant(
-        ChatCompletionAssistantMessageParam.builder().content(assistantMessage.toString()).build()
-      )
-    )
-
-    // Add the user message with the tool result
-    messages.add(
-      ChatCompletionMessageParam.ofUser(
-        ChatCompletionUserMessageParam.builder()
-          .content(
-            """
-                                              "type": "tool_result",
-                                              "tool_use_id": ${toolCall.id()},
-                                              "result": ${result?.content?.joinToString()}
-                                          """.trimIndent()
-          )
-          .build()
-      )
-    )
-    println("Function result = ${result?.content?.joinToString()}")
-
-    // Request a new response after the tool usage
-    val params = ChatCompletionCreateParams.builder()
-      .messages(messages)
-      .model(ChatModel.GPT_4O)
-      .maxCompletionTokens(1000)
-      .tools(availableTools)
-      .build()
-
-    // Append the additional content from the new response
-    val response = openAiClient.chat().completions().create(params)
-
-    val responseChoice = response.choices().firstOrNull()?.message()
-    val responseChoiceContent = responseChoice?.content()?.getOrNull() ?: ""
-    val responseChoiceTools = responseChoice?.toolCalls()?.getOrNull()
-    answer.appendLine(responseChoiceContent)
-    println("Result: $responseChoiceContent")
-    println(
-      "Subsequent Tool calls: ${
-        responseChoiceTools?.size
-      }"
-    )
-    if (responseChoiceTools != null) {
-      toolsList.addAll(responseChoiceTools)
-    }
   }
 
 
