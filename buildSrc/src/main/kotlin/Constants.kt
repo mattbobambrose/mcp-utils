@@ -1,3 +1,4 @@
 package buildsrc.convention
 
-const val versionStr = "0.1.1-SNAPSHOT"
+// Change globally in build.gradle.kts
+const val versionStr = "0.1.1"

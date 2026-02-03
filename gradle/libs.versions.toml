@@ -10,11 +10,11 @@ kotlinxCoroutines = "1.10.2"
 junit = "4.13.2"
 mcp = "0.8.3"
 slf4j = "2.0.17"
-ktor = "3.2.2"
+ktor = "3.4.0"
 shadow = "8.1.1"
-openai = "2.17.0"
-utils = "2.3.11"
-versions = "0.52.0"
+openai = "4.17.0"
+utils = "2.4.10"
+versions = "0.53.0"
 
 [libraries]
 kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
